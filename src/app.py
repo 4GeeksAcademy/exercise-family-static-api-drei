@@ -26,23 +26,23 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
+def get_member():
 
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
-    response_body = {
-        "hello": "world",
-        "family": members
-    }
 
+    return jsonify(members), 200
 
-    return jsonify(response_body), 200
+@app.route('/members/<int:id>', methods=['GET'])
+def get_members_id(id):
+    member= jackson_family.get_member(id)
+    return jsonify(member), 200
+
 
 @app.route('/members', methods=['POST'])
 def addMember():
 
     member= {
-        "id": request.json.get("id"),
         "first_name": request.json.get("first_name"),
         "age": request.json.get("age"),
         "lucky_numbers": request.json.get("lucky_numbers")
@@ -51,14 +51,13 @@ def addMember():
     response = jackson_family.add_member(member)
     return jsonify("Usuario Creado"), 200
 
-@app.route('/members', methods=['DELETE'])
-def deleteMember(member_id):
+@app.route('/members/<int:id>', methods=['DELETE'])
+def deleteMember(id):
 
-    delete_member= jackson_family.delete_member(member_id) 
-    if not  delete_member:
-        return jsonify("Error, user not deleted"), 400
+    delete_member = jackson_family.delete_member(id) 
+    return jsonify({"message": "User deleted"}), 200
     
-    return jsonify("User deleted"), 200
+    # ME SALTA ERRO AL HACER EL DELETE PERO SI QUE SE BORRA
 
     
 
